@@ -1,0 +1,47 @@
+# docker-compose-redis-test.yml
+services:
+  # Redis 연동 테스트용 웹 애플리케이션
+  web:
+    image: node:alpine
+    ports:
+      - "3000:3000"
+    working_dir: /app
+    volumes:
+      - ./app:/app
+    command: sh -c "npm install && node server.js"
+    networks:
+      - app-network
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"  # Redis 포트도 노출 (외부 접근용)
+    networks:
+      - app-network
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+
+  # Redis 관리 도구 (선택사항)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    networks:
+      - app-network
+    depends_on:
+      - redis
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  redis-data:
