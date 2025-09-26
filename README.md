@@ -1,4 +1,7 @@
-### curl 또는 postman 이용해 데이터 저장
+## 컨테이너 생성
+docker compose -f docker-compose-redis-test.yml up -d
+
+## curl 또는 postman 이용해 데이터 저장
 1. 데이터 저장
 curl -X POST http://localhost:3000/set/user1 \
   -H "Content-Type: application/json" \
